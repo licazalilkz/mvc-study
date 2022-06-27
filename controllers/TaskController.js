@@ -1,10 +1,10 @@
 const Task = require("../models/Task");
 
 module.exports = class TaskController {
-  static CreateTask(_req, res) {
+  static createTask(_req, res) {
     res.render("tasks/create");
   }
-  static async CreateTaskSave(req, res) {
+  static async createTaskSave(req, res) {
     const task = {
       title: req.body.title,
       description: req.body.description,
@@ -17,5 +17,16 @@ module.exports = class TaskController {
     const tasks = await Task.findAll({ raw: true });
 
     res.render("tasks/all", { tasks });
+  }
+  static async removeTask(req, res) {
+    const id = req.body.id;
+    await Task.destroy({ where: { id: id } });
+    res.redirect("/tasks");
+  }
+
+  static async updateTask(req, res) {
+    const id = req.params.id;
+    const task = await Task.findOne({ where: { id: id }, raw: true });
+    res.render("tasks/edit", { task });
   }
 };
